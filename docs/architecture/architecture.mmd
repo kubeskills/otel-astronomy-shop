@@ -1,0 +1,104 @@
+%% OpenTelemetry Demo (Astronomy Shop) — architecture
+%% Source of truth: compose.yaml, compose.full.yaml, compose.observability.yaml,
+%% src/frontend-proxy/envoy.tmpl.yaml, src/otel-collector/otelcol-config*.yml
+%% in https://github.com/open-telemetry/opentelemetry-demo
+%%{init: {"flowchart": {"nodeSpacing": 40, "rankSpacing": 70, "curve": "basis"}}}%%
+flowchart TB
+  user([Browser / Load Generator<br/>Python + Locust])
+  envoy[frontend-proxy<br/>Envoy]
+
+  subgraph app[Application services · gRPC unless noted]
+    direction TB
+    frontend[frontend<br/>TypeScript / Next.js]
+    subgraph leaf[Backend services]
+      direction LR
+      ad[ad<br/>Java]
+      cart[cart<br/>.NET]
+      currency[currency<br/>C++]
+      reco[recommendation<br/>Python]
+      catalog[product-catalog<br/>Go]
+      shipping[shipping<br/>Rust]
+      quote[quote<br/>PHP]
+      payment[payment<br/>Node.js]
+      email[email<br/>Ruby]
+    end
+    checkout[checkout<br/>Go]
+    images[image-provider<br/>nginx]
+  end
+
+  subgraph data[Data stores and messaging]
+    direction LR
+    valkey[(valkey-cart)]
+    pg[(PostgreSQL)]
+    kafka{{Kafka}}
+  end
+
+  subgraph async[Async consumers]
+    direction LR
+    accounting[accounting<br/>.NET]
+    fraud[fraud-detection<br/>Kotlin]
+  end
+
+  subgraph flags[Feature flags]
+    direction LR
+    flagd[flagd]
+    flagdui[flagd-ui<br/>Elixir]
+  end
+
+  subgraph obs[Observability]
+    direction LR
+    otelcol[[OTel Collector]]
+    jaeger[Jaeger]
+    prom[Prometheus]
+    opensearch[OpenSearch]
+    grafana[Grafana]
+    opamp[OpAMP server]
+  end
+
+  %% Ingress
+  user -->|HTTP| envoy
+  envoy -->|"/"| frontend
+  envoy -->|"/images/"| images
+  envoy -->|"/feature"| flagdui
+  envoy -->|"/otlp-http/"| otelcol
+  envoy -.->|"/jaeger/ /grafana/ /opamp/"| obs
+
+  %% Frontend and checkout fan-out
+  frontend --> ad & cart & currency & reco & catalog & shipping
+  frontend --> checkout
+  checkout --> cart & currency & catalog & payment & shipping
+  checkout -->|HTTP| email
+  reco --> catalog
+  shipping -->|HTTP| quote
+
+  %% Data and async
+  cart --> valkey
+  catalog --> pg
+  checkout -->|produce| kafka
+  kafka -->|consume| accounting & fraud
+  accounting --> pg
+  flagdui -.->|writes flag file| flagd
+
+  %% Feature flags (OpenFeature / flagd)
+  flagd -.->|flag evaluation| app
+  flagd -.-> async
+
+  %% Telemetry
+  app ==>|OTLP| otelcol
+  async ==>|OTLP| otelcol
+  envoy ==>|OTLP| otelcol
+  data -.->|kafka / postgresql / redis receivers| otelcol
+  otelcol -->|traces| jaeger
+  otelcol -->|metrics| prom
+  otelcol -->|logs| opensearch
+  otelcol <-.->|OpAMP| opamp
+  grafana -.->|query| jaeger & prom & opensearch
+
+  classDef proxy fill:#e8f0fe,stroke:#4285f4,color:#111;
+  classDef svc fill:#f1f3f4,stroke:#5f6368,color:#111;
+  classDef store fill:#fef7e0,stroke:#f9ab00,color:#111;
+  classDef otel fill:#e6f4ea,stroke:#1e8e3e,color:#111;
+  class envoy proxy;
+  class frontend,ad,cart,checkout,currency,email,payment,catalog,quote,reco,shipping,images,accounting,fraud,flagd,flagdui svc;
+  class valkey,pg,kafka store;
+  class otelcol,jaeger,prom,opensearch,grafana,opamp otel;
