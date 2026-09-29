@@ -1,0 +1,27 @@
+otel-astronomy-shop
+Companion resources for the KubeSkills OpenTelemetry videos.
+
+This repository builds on the OpenTelemetry Demo (Astronomy Shop) for learning
+purposes. It is not affiliated with or endorsed by the OpenTelemetry project.
+
+Third-party material
+--------------------
+
+Copyright The OpenTelemetry Authors
+Licensed under the Apache License, Version 2.0. A copy of the license is in
+third_party/opentelemetry/LICENSE.
+
+1. helm/values-components.yaml
+   Source:  https://github.com/open-telemetry/opentelemetry-helm-charts
+            charts/opentelemetry-demo/values.yaml
+            (chart 0.42.1, appVersion 3.1.0, main as of 2026-09-29)
+   Changes: Extracted the `components`, `jaeger`, `prometheus`, `grafana`, and
+            `opensearch` top-level keys; content is unmodified. Added a header
+            comment. This is a partial file, not a complete values file.
+
+2. docs/architecture/ (architecture.mmd, architecture.svg, architecture.png)
+   Original diagram derived from the Compose files, Envoy routes, and
+   Collector configs in https://github.com/open-telemetry/opentelemetry-demo
+   (main as of 2026-09-28). No upstream files are copied verbatim.
+
+The upstream projects do not ship a NOTICE file.

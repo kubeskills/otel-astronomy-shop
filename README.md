@@ -14,6 +14,8 @@ The demo, its source code, and its documentation belong to the OpenTelemetry pro
 
 Material in this repo is derived from the upstream demo and may drift from it over time. When something here disagrees with the official docs, the official docs are correct.
 
+Copied or derived files carry Apache-2.0 attribution to The OpenTelemetry Authors. See [NOTICE](NOTICE) and [third_party/opentelemetry/LICENSE](third_party/opentelemetry/LICENSE).
+
 ## Docs
 
 - [Architecture diagram](docs/architecture/README.md)

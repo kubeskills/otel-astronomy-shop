@@ -1,3 +1,15 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Derived from charts/opentelemetry-demo/values.yaml in
+# https://github.com/open-telemetry/opentelemetry-helm-charts
+# (chart 0.42.1, appVersion 3.1.0, main as of 2026-09-29).
+# License: see third_party/opentelemetry/LICENSE and NOTICE.
+#
+# Changes from upstream: kept only the `components`, `jaeger`, `prometheus`,
+# `grafana`, and `opensearch` top-level keys, and added this header. Their
+# contents are unmodified. Not a complete values file; use the upstream chart.
+---
 components:
   ## Demo Components are named objects (services) with several properties
   # demoService:
