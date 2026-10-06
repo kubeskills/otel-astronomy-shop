@@ -30,7 +30,7 @@ npx -y @mermaid-js/mermaid-cli -i architecture.mmd -o architecture.png -b white 
 
 - `helm/values-components.yaml` comes from `charts/opentelemetry-demo/values.yaml` in `open-telemetry/opentelemetry-helm-charts` (not from `opentelemetry-demo`). The block contents must stay **verbatim**; only the header comment is ours. Do not hand-edit values in it. Pull changes from upstream instead.
 - When adding or changing a copied or derived file: keep its Apache-2.0 header (copyright, SPDX id, source, list of changes) and update the matching entry in `NOTICE`, including the upstream version and date.
-- `helm/values-default.yaml` (full upstream copy) is deliberately untracked. Don't commit it without also adding a header and a `NOTICE` entry.
+- `helm/values-default.yaml` (full upstream copy) is gitignored and kept local for reference. Don't commit it (by removing the ignore rule or `git add -f`) without also adding a header and a `NOTICE` entry.
 
 ## Conventions
 
