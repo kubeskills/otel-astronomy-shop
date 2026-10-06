@@ -1,0 +1,26 @@
+# Full upstream Helm values copy. Kept local for reference only; committing it
+# requires an Apache-2.0 header and a NOTICE entry (see CLAUDE.md).
+helm/values-default.yaml
+
+# Helm artifacts
+*.tgz
+helm/charts/
+helm/Chart.lock
+
+# Local overrides and secrets
+*.local.yaml
+.env
+.env.*
+kubeconfig*
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Node (mermaid-cli via npx)
+node_modules/
+
+# OS and editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
